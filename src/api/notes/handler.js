@@ -90,7 +90,7 @@ class NotesHandler {
         try{
         this._validator.validateNotePayload(request.payload);
         const { id } = request.params
-        await this._service.editNoteById(id, { title, body, tags });
+        await this._service.editNoteById(id, request.payload);
         return {
             status: 'success',
             message: 'Catatan berhasil diperbarui',
