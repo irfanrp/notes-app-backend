@@ -10,8 +10,6 @@ class UsersService {
     }
 
     async addUser({ username, password, fullname }){
-        //TODO: veritifikasi  username, pastikan  belum terdaftar
-        //TODO: Bila veritifikasi lolos , maka masukan user baru ke database
         await this.verifyNewUsername(username);
  
         const id = `user-${nanoid(16)}`;
@@ -35,20 +33,20 @@ class UsersService {
     async verifyNewUsername (username){
         const query = {
             text: 'SELECT username FROM users WHERE username = $1',
-            values: [username]
+            values: [username],
         };
 
         const result = await this._pool.query(query);
 
         if (result.rows.length > 0 ){
-            throw new InvariantError ('Gagal menambahkan user. Username sudah digunakan')
+            throw new InvariantError ('Gagal menambahkan user. Username sudah digunakan.')
         }
     }
 
     async getUserById (userId){
         const query = {
             text: 'SELECT id, username, fullname FROM users WHERE id = $1',
-            values: [userId]
+            values: [userId],
         };
 
         const result = await this._pool.query(query);
