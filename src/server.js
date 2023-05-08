@@ -1,45 +1,33 @@
-require ('dotenv').config();
+// mengimpor dotenv dan menjalankan konfigurasinya
+require('dotenv').config();
 
-const Hapi = require ('@hapi/hapi')
-const notes =  require ('./api/notes');
-const users = require('./api/users');
-const NotesService = require ('./services/postgres/NoteService');
-const UsersService = require('./services/postgres/UsersService');
-const NotesValidator = require ('./validator/notes');
-const UsersValidator = require('./validator/users');
+const Hapi = require('@hapi/hapi');
+const notes = require('./api/notes');
+const NotesValidator = require('./validator/notes');
+const NotesService = require ('./services/postgres/NoteService')
 
-const init = async () =>{
-    const notesService =  new NotesService ();
-    const usersService = new UsersService();
-    const server = Hapi.server({
-       port: process.env.PORT,
-       host: process.env.HOST,
-       routes: {
-          cors: {
-            origin: ['*'],
-          },
-        },
-      });
-
-    await server.register([
-    {
-      plugin: notes,
-      options: {
-        service: notesService,
-        validator: NotesValidator,
+const init = async () => {
+  const notesService = new NotesService();
+  const server = Hapi.server({
+    port: process.env.PORT,
+    host: process.env.HOST,
+    routes: {
+      cors: {
+        origin: ['*'],
       },
     },
-    {
-      plugin: users,
-      options: {
-          service: usersService,
-          validator: UsersValidator,
-      },
-    }
-   ]);
+  });
 
-    await server.start();
-    console.log(`Server berjalan pada ${server.info.uri}`)
+  await server.register({
+    plugin: notes,
+    options: {
+      service: notesService,
+      validator: NotesValidator,
+    },
+  });
+
+  await server.start();
+  console.log(`Server berjalan pada ${server.info.uri}`);
 };
 
-init()
+init();
